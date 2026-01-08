@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Feedback Analytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+
+    <header class="bg-blue-600 text-white py-6 shadow-md">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl font-bold">Feedback Analysis System</h1>
+            <p class="text-blue-100">Empowering data-driven educational improvements</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Submit Feedback</h2>
+                <form id="feedbackForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Overall Satisfaction</label>
+                        <select id="satisfaction" class="w-full mt-1 p-2 border rounded-md bg-gray-50">
+                            <option value="Excellent">Excellent</option>
+                            <option value="Good">Good</option>
+                            <option value="Average">Average</option>
+                            <option value="Poor">Poor</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Course Quality (1-5)</label>
+                        <input type="range" id="quality" min="1" max="5" value="4" class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
+                        Update Dashboard
+                    </button>
+                </form>
+            </div>
+
+            <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="text-center font-medium text-gray-600 mb-4">Satisfaction Levels</h3>
+                    <canvas id="pieChart"></canvas>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="text-center font-medium text-gray-600 mb-4">Average Rating Score</h3>
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Initial Mock Data
+        let feedbackData = {
+            excellent: 12,
+            good: 18,
+            average: 5,
+            poor: 2
+        };
+
+        // --- Chart Configurations ---
+
+        // 1. Pie Chart for Satisfaction
+        const ctxPie = document.getElementById('pieChart').getContext('2d');
+        const pieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['Excellent', 'Good', 'Average', 'Poor'],
+                datasets: [{
+                    data: [feedbackData.excellent, feedbackData.good, feedbackData.average, feedbackData.poor],
+                    backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444'],
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        // 2. Bar Chart for Trend (Static Example)
+        const ctxBar = document.getElementById('barChart').getContext('2d');
+        const barChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Quality', 'Materials', 'Teacher', 'Facility'],
+                datasets: [{
+                    label: 'Rating (out of 5)',
+                    data: [4.2, 3.8, 4.5, 3.2],
+                    backgroundColor: '#6366F1'
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true, max: 5 } }
+            }
+        });
+
+        // --- Form Logic ---
+        document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const selected = document.getElementById('satisfaction').value.toLowerCase();
+            const qualityScore = document.getElementById('quality').value;
+
+            // Update Pie Chart Data
+            feedbackData[selected]++;
+            pieChart.data.datasets[0].data = [
+                feedbackData.excellent, 
+                feedbackData.good, 
+                feedbackData.average, 
+                feedbackData.poor
+            ];
+            
+            // Update Bar Chart (simulating a change in Course Quality)
+            barChart.data.datasets[0].data[0] = qualityScore;
+
+            // Refresh Charts
+            pieChart.update();
+            barChart.update();
+
+            alert("Feedback recorded! Charts updated.");
+        });
+    </script>
+</body>
+</html>
